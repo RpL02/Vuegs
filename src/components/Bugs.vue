@@ -2,7 +2,8 @@
 	<div class="container space-top">
         
         <div class="form-inline">
-            <p class="left-space"><strong>Bugs: </strong>{{ getBugStatusNumber('danger') }} </p>
+            <p class="left-space"><strong>Bugs: </strong>{{ bugs.length }} </p>
+            <p class="left-space"><strong>Asignados: </strong>{{ getBugStatusNumber('info') }} </p>
             <p class="left-space"><strong>Corregidos: </strong>{{ getBugStatusNumber('success') }} </p>
             <p class="left-space"><strong>Espera: </strong>{{ getBugStatusNumber('secondary') }} </p>
         </div>
@@ -33,10 +34,13 @@
 	        	Revisar
 	        </router-link>
             <button type="button" class="btn btn btn-outline-light btn-sm" v-on:click="updateBugStatus('success', bug.ticketId)">
-                FixedUp
+                Fixedup
             </button>
             <button type="button" class="btn btn btn-outline-light btn-sm" v-on:click="updateBugStatus('secondary', bug.ticketId)">
             Wait
+            </button>
+            <button type="button" class="btn btn btn-outline-light btn-sm" v-on:click="updateBugStatus('info', bug.ticketId)">
+                Assigned
             </button>
 	    </b-card>
 	    </b-card-group>
