@@ -1,5 +1,12 @@
 <template>
 	<div class="container space-top">
+        
+        <div class="form-inline">
+            <p class="left-space"><strong>Bugs: </strong>{{ getBugStatusNumber('danger') }} </p>
+            <p class="left-space"><strong>Corregidos: </strong>{{ getBugStatusNumber('success') }} </p>
+            <p class="left-space"><strong>Espera: </strong>{{ getBugStatusNumber('secondary') }} </p>
+        </div>
+
         <b-form-input placeholder="Search Bug: Type or TicketId" v-model="search"/>
         <br>
 		<b-card-group deck class="mb-3" v-for="bug in filteredBugs" :key="bug.ticketId" v-bind:bug="bug">
@@ -7,6 +14,7 @@
 	        text-variant="white"
 	        class="text-center">
 	        <p class="card-text"><strong>{{bug.shortDescription}}</strong></p>
+            <p class="card-text">{{bug.longDescription}}</p>
             <div class="row" >
                 <div class="col">
                     <p><strong>Prioridad: </strong>{{bug.priority}}</p>
@@ -22,8 +30,14 @@
             </div>
 	        <router-link class="btn btn btn-outline-light btn-sm" 
 	        	v-bind:to="{name: 'view-bug', params: {bug_id: bug.ticketId}}">
-	        	revisar
+	        	Revisar
 	        </router-link>
+            <button type="button" class="btn btn btn-outline-light btn-sm" v-on:click="updateBugStatus('success', bug.ticketId)">
+                FixedUp
+            </button>
+            <button type="button" class="btn btn btn-outline-light btn-sm" v-on:click="updateBugStatus('secondary', bug.ticketId)">
+            Wait
+            </button>
 	    </b-card>
 	    </b-card-group>
 	</div>
@@ -48,14 +62,36 @@
         computed: {
             filteredBugs: function() {
                 return this.bugs.filter((bug) => {
-                    return bug.ticketId.match(this.search) || bug.type.match(this.search);
+                    return bug.ticketId.match(this.search) || bug.type.match(this.search) || bug.shortDescription.match(this.search)
                 }) 
+            }
+        },
+        methods: {
+            getBugStatusNumber(status){
+                return this.bugs.filter(bug => bug.variant == status).length;
+            },
+            updateBugStatus(status, bugId){
+                db.collection('Bugs').where('ticketId', '==', bugId)
+                .get()
+                .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    doc.ref.update({
+                        variant: status
+                    })
+                    .then(()=> {
+                        
+                    })
+                })
+            })
             }
         }
 	}
 </script>
 
 <style>
+.left-space{
+    margin-left: 20px;
+}
 @keyframes placeHolderShimmer{
     0%{
       background-position: -468px 0
